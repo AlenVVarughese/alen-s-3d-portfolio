@@ -1,0 +1,135 @@
+import { motion } from "framer-motion";
+import { GraduationCap } from "lucide-react";
+import { TiltCard } from "./TiltCard";
+
+const skills = [
+  "Python", "SQL", "R", "PySpark",
+  "Power BI", "Delta Lake", "Databricks", "AI-Prompting",
+  "Excel", "Pandas", "Matplotlib", "Seaborn",
+];
+
+const education = [
+  {
+    school: "Rathinam College of Arts & Science",
+    degree: "M.Sc — Data Science & Business Analytics",
+    period: "2025 – 2027",
+    score: "77.5%",
+  },
+  {
+    school: "Sri Ramakrishna College of Arts & Science",
+    degree: "Bachelor of Computer Applications",
+    period: "2022 – 2025",
+    score: "80.2%",
+  },
+  {
+    school: "Sri Ramakrishna Matric. Hr. Sec. School",
+    degree: "Higher Secondary (Class XII)",
+    period: "2021 – 2022",
+    score: "92.2%",
+  },
+];
+
+export function About() {
+  return (
+    <section id="about" className="relative py-32 px-6">
+      <div className="container mx-auto max-w-6xl">
+        <SectionLabel index="02" title="ABOUT / ACADEMIC CROWN" />
+
+        <div className="mt-12 grid lg:grid-cols-5 gap-6">
+          <TiltCard className="lg:col-span-3" intensity={6}>
+            <div className="glass rounded-3xl p-8 h-full relative overflow-hidden">
+              <div className="absolute inset-x-0 top-0 seam-gold" />
+              <GraduationCap className="size-8 text-gold mb-4" />
+              <h3 className="text-2xl font-display font-bold mb-3">
+                Aspiring Data Analyst with an architect's mindset.
+              </h3>
+              <p className="text-muted-foreground leading-relaxed">
+                I'm pursuing my M.Sc. in Data Science & Business Analytics, building
+                end-to-end pipelines, dashboards, and predictive models. I turn raw,
+                messy datasets into clean, actionable intelligence — and I love
+                designing the systems that make it repeatable.
+              </p>
+              <p className="mt-4 text-muted-foreground leading-relaxed">
+                Strong in Python, SQL, Power BI, and PySpark on Databricks; comfortable
+                with the full Medallion Architecture and modern BI workflows.
+              </p>
+            </div>
+          </TiltCard>
+
+          <div className="lg:col-span-2 space-y-3">
+            {education.map((e, i) => (
+              <motion.div
+                key={e.school}
+                initial={{ opacity: 0, x: 30 }}
+                whileInView={{ opacity: 1, x: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.1 }}
+                className="glass rounded-2xl p-5 hover:glass-teal transition-all"
+              >
+                <div className="flex justify-between items-start gap-3">
+                  <div>
+                    <div className="text-xs font-mono text-teal tracking-widest">
+                      {e.period}
+                    </div>
+                    <div className="mt-1 font-semibold">{e.degree}</div>
+                    <div className="text-sm text-muted-foreground">{e.school}</div>
+                  </div>
+                  <div className="text-gradient-gold font-display font-bold text-xl">
+                    {e.score}
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+        </div>
+
+        {/* Skills Constellation */}
+        <div className="mt-16">
+          <div className="flex items-baseline justify-between mb-6">
+            <h3 className="text-2xl font-display font-bold">
+              Skills <span className="text-gold">Constellation</span>
+            </h3>
+            <span className="font-mono text-xs text-muted-foreground tracking-widest">
+              TECH.STACK
+            </span>
+          </div>
+          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
+            {skills.map((s, i) => (
+              <motion.div
+                key={s}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.04 }}
+                whileHover={{ y: -6, scale: 1.04 }}
+                className="group relative glass rounded-xl p-4 text-center cursor-default hover:glass-gold transition-all"
+              >
+                <div className="font-mono text-sm group-hover:text-gold transition-colors">
+                  {s}
+                </div>
+                <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-gold/10 to-teal/10 pointer-events-none" />
+              </motion.div>
+            ))}
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
+export function SectionLabel({ index, title }: { index: string; title: string }) {
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="flex items-center gap-4"
+    >
+      <span className="font-mono text-gold text-sm">{index}</span>
+      <div className="h-px flex-1 max-w-[80px] bg-gold/40" />
+      <span className="font-mono text-xs tracking-[0.3em] text-muted-foreground">
+        {title}
+      </span>
+    </motion.div>
+  );
+}
