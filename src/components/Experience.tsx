@@ -1,30 +1,11 @@
 import { motion } from "framer-motion";
 import { Briefcase } from "lucide-react";
 import { SectionLabel } from "./About";
-
-const experience = [
-  {
-    role: "Data Analytics & BI Intern",
-    company: "Thiranex Technologies",
-    period: "Recent",
-    points: [
-      "Built Power BI dashboards and automated reporting workflows in Python",
-      "Developed customer segmentation models and predictive analytics solutions",
-      "Improved data visualization, preprocessing, and statistical analysis skills on real-world datasets",
-    ],
-  },
-  {
-    role: "Mobile Application Development Intern",
-    company: "Accent Techno Soft",
-    period: "Earlier",
-    points: [
-      "Gained foundational knowledge in mobile app design and development",
-      "Worked across testing and debugging cycles for production-ready builds",
-    ],
-  },
-];
+import { usePortfolio } from "@/lib/portfolio-store";
 
 export function Experience() {
+  const { data } = usePortfolio();
+  const experience = data.experience;
   return (
     <section id="experience" className="relative py-32 px-6">
       <div className="container mx-auto max-w-5xl">
@@ -34,12 +15,11 @@ export function Experience() {
         </h2>
 
         <div className="relative pl-8 md:pl-12">
-          {/* vertical pipeline */}
           <div className="absolute left-2 md:left-4 top-2 bottom-2 w-px bg-gradient-to-b from-gold via-teal to-transparent" />
 
           {experience.map((e, i) => (
             <motion.div
-              key={e.role}
+              key={e.id}
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -63,8 +43,8 @@ export function Experience() {
                   <Briefcase className="size-5 text-gold/60" />
                 </div>
                 <ul className="space-y-2 text-sm text-muted-foreground">
-                  {e.points.map((p) => (
-                    <li key={p} className="flex gap-3">
+                  {e.points.map((p, j) => (
+                    <li key={j} className="flex gap-3">
                       <span className="text-teal mt-1">▸</span>
                       <span>{p}</span>
                     </li>

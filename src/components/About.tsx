@@ -3,15 +3,10 @@ import { GraduationCap } from "lucide-react";
 import { TiltCard } from "./TiltCard";
 import { usePortfolio } from "@/lib/portfolio-store";
 
-const skills = [
-  "Python", "SQL", "R", "PySpark",
-  "Power BI", "Delta Lake", "Databricks", "AI-Prompting",
-  "Excel", "Pandas", "Matplotlib", "Seaborn",
-];
-
 export function About() {
   const { data } = usePortfolio();
   const education = data.education;
+  const skills = data.skills;
   return (
     <section id="about" className="relative py-32 px-6">
       <div className="container mx-auto max-w-6xl">
@@ -23,17 +18,13 @@ export function About() {
               <div className="absolute inset-x-0 top-0 seam-gold" />
               <GraduationCap className="size-8 text-gold mb-4" />
               <h3 className="text-2xl font-display font-bold mb-3">
-                Aspiring Data Analyst with an architect's mindset.
+                {data.aboutHeading}
               </h3>
-              <p className="text-muted-foreground leading-relaxed">
-                I'm pursuing my M.Sc. in Data Science & Business Analytics, building
-                end-to-end pipelines, dashboards, and predictive models. I turn raw,
-                messy datasets into clean, actionable intelligence — and I love
-                designing the systems that make it repeatable.
+              <p className="text-muted-foreground leading-relaxed whitespace-pre-line">
+                {data.aboutBody1}
               </p>
-              <p className="mt-4 text-muted-foreground leading-relaxed">
-                Strong in Python, SQL, Power BI, and PySpark on Databricks; comfortable
-                with the full Medallion Architecture and modern BI workflows.
+              <p className="mt-4 text-muted-foreground leading-relaxed whitespace-pre-line">
+                {data.aboutBody2}
               </p>
             </div>
           </TiltCard>
@@ -78,7 +69,7 @@ export function About() {
           <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3">
             {skills.map((s, i) => (
               <motion.div
-                key={s}
+                key={s.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
@@ -87,7 +78,7 @@ export function About() {
                 className="group relative glass rounded-xl p-4 text-center cursor-default hover:glass-gold transition-all"
               >
                 <div className="font-mono text-sm group-hover:text-gold transition-colors">
-                  {s}
+                  {s.name}
                 </div>
                 <div className="absolute inset-0 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity bg-gradient-to-br from-gold/10 to-teal/10 pointer-events-none" />
               </motion.div>

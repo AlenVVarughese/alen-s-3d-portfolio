@@ -61,7 +61,7 @@ export function Hero() {
           transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
           className="relative size-20 lg:size-24 rounded-2xl overflow-hidden border border-gold/40 shadow-[0_15px_40px_-10px] shadow-gold/30"
         >
-          <ProfileMedia url={data.profileVideoUrl} className="absolute inset-0" />
+          <ProfileMedia url={data.profileVideoUrl} className="absolute inset-0" withAudioToggle />
           <div className="absolute inset-0 ring-1 ring-inset ring-gold/30 rounded-2xl pointer-events-none" />
           <div className="absolute top-1 left-1 size-1.5 rounded-full bg-teal animate-pulse" />
         </motion.div>
@@ -76,7 +76,7 @@ export function Hero() {
             className="inline-flex items-center gap-2 glass px-3 py-1.5 rounded-full text-xs font-mono tracking-wider"
           >
             <span className="size-1.5 rounded-full bg-teal animate-pulse" />
-            <span className="text-muted-foreground">AVAILABLE FOR DATA ANALYST ROLES</span>
+            <span className="text-muted-foreground">{data.availability}</span>
           </motion.div>
 
           <motion.h1
@@ -95,9 +95,9 @@ export function Hero() {
             transition={{ duration: 0.7, delay: 0.25 }}
             className="text-lg sm:text-xl text-muted-foreground max-w-xl"
           >
-            Deciphering Data, Architecturalizing Intelligence.
+            {data.tagline}
             <span className="block mt-2 text-sm font-mono text-teal/80">
-              M.Sc. Data Science & Business Analytics — Aspiring Data Analyst
+              {data.subtitle}
             </span>
           </motion.p>
 
@@ -160,7 +160,7 @@ export function Hero() {
                 style={{ transform: "translateZ(40px)" }}
               >
                 <div className="absolute inset-0 grid-bg-fine opacity-50" />
-                <ProfileMedia url={data.profileVideoUrl} className="absolute inset-0" />
+                <ProfileMedia url={data.profileVideoUrl} className="absolute inset-0" withAudioToggle />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex justify-between font-mono text-[9px] text-teal/70">
                   <span>LAT 10.9°N</span>

@@ -6,12 +6,14 @@ import { SectionLabel } from "./About";
 import { Magnetic } from "./Magnetic";
 import { usePortfolio } from "@/lib/portfolio-store";
 
-const socials = [
-  { label: "GitHub", handle: "@alenvvarughese", href: "https://github.com/alenvvarughese", icon: Github },
-  { label: "LinkedIn", handle: "alen-v-varughese", href: "https://linkedin.com/in/alen-v-varughese-a035b424b", icon: Linkedin },
-  { label: "Email", handle: "alenvarughese25@gmail.com", href: "mailto:alenvarughese25@gmail.com", icon: Mail },
-  { label: "Phone", handle: "+91 97903 84795", href: "tel:+919790384795", icon: Phone },
-];
+const handleFromUrl = (u: string) => {
+  try {
+    const x = u.replace(/\/$/, "").split("/").pop() || u;
+    return x;
+  } catch {
+    return u;
+  }
+};
 
 export function Contact() {
   const { data } = usePortfolio();
@@ -19,6 +21,13 @@ export function Contact() {
   const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
   const [errMsg, setErrMsg] = useState("");
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
+
+  const socials = [
+    { label: "GitHub", handle: `@${handleFromUrl(data.socials.github)}`, href: data.socials.github, icon: Github },
+    { label: "LinkedIn", handle: handleFromUrl(data.socials.linkedin), href: data.socials.linkedin, icon: Linkedin },
+    { label: "Email", handle: data.socials.email, href: `mailto:${data.socials.email}`, icon: Mail },
+    { label: "Phone", handle: data.socials.phone, href: `tel:${data.socials.phone.replace(/\s+/g, "")}`, icon: Phone },
+  ];
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -173,7 +182,7 @@ export function Contact() {
       </div>
 
       <footer className="mt-24 pt-8 border-t border-border/40 text-center font-mono text-xs text-muted-foreground">
-        <p>© 2026 ALEN V VARUGHESE — Architecturalizing Intelligence.</p>
+        <p>{data.footerText}</p>
       </footer>
     </section>
   );
