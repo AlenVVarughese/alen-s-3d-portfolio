@@ -23,6 +23,26 @@ export interface ProjectItem {
   metrics: { label: string; value: string }[];
 }
 
+export interface ExperienceItem {
+  id: string;
+  role: string;
+  company: string;
+  period: string;
+  points: string[];
+}
+
+export interface SkillItem {
+  id: string;
+  name: string;
+}
+
+export interface Socials {
+  github: string;
+  linkedin: string;
+  email: string;
+  phone: string;
+}
+
 export interface EmailJsConfig {
   serviceId: string;
   templateId: string;
@@ -33,9 +53,25 @@ export interface EmailJsConfig {
 export interface PortfolioData {
   profileVideoUrl: string;
   profileName: string;
+  profileAudio: boolean;
+
+  // Hero content
+  tagline: string;
+  subtitle: string;
+  availability: string;
+  footerText: string;
+
+  // About content
+  aboutHeading: string;
+  aboutBody1: string;
+  aboutBody2: string;
+
   heroStats: HeroStat[];
   education: EduItem[];
+  skills: SkillItem[];
   projects: ProjectItem[];
+  experience: ExperienceItem[];
+  socials: Socials;
   emailjs: EmailJsConfig;
 }
 
@@ -45,6 +81,21 @@ const DEFAULT_VIDEO =
 const DEFAULT_DATA: PortfolioData = {
   profileVideoUrl: DEFAULT_VIDEO,
   profileName: "ALEN.V.VARUGHESE",
+  profileAudio: false,
+
+  tagline:
+    "Transforming Raw Data into Meaningful Business Decisions.",
+  subtitle:
+    "Junior Data Analyst passionate about analytics, visualization, and AI.",
+  availability: "AVAILABLE FOR JUNIOR DATA ANALYST ROLES",
+  footerText: "© 2026 ALEN V VARUGHESE — Transforming Data into Decisions.",
+
+  aboutHeading: "Junior Data Analyst with an architect's mindset.",
+  aboutBody1:
+    "I'm pursuing my M.Sc. in Data Science & Business Analytics, building end-to-end pipelines, dashboards, and predictive models. I turn raw, messy datasets into clean, actionable intelligence — and I love designing the systems that make it repeatable.",
+  aboutBody2:
+    "Strong in Python, SQL, Power BI, and PySpark on Databricks; comfortable with the full Medallion Architecture and modern BI workflows.",
+
   heroStats: [
     { id: "s1", value: "8+", label: "PROJECTS" },
     { id: "s2", value: "2", label: "INTERNSHIPS" },
@@ -73,6 +124,11 @@ const DEFAULT_DATA: PortfolioData = {
       score: "92.2%",
     },
   ],
+  skills: [
+    "Python", "SQL", "R", "PySpark",
+    "Power BI", "Delta Lake", "Databricks", "AI-Prompting",
+    "Excel", "Pandas", "Matplotlib", "Seaborn",
+  ].map((n, i) => ({ id: `sk${i}`, name: n })),
   projects: [
     {
       id: "p1",
@@ -163,15 +219,44 @@ const DEFAULT_DATA: PortfolioData = {
       ],
     },
   ],
+  experience: [
+    {
+      id: "x1",
+      role: "Data Analytics & BI Intern",
+      company: "Thiranex Technologies",
+      period: "Recent",
+      points: [
+        "Built Power BI dashboards and automated reporting workflows in Python",
+        "Developed customer segmentation models and predictive analytics solutions",
+        "Improved data visualization, preprocessing, and statistical analysis skills on real-world datasets",
+      ],
+    },
+    {
+      id: "x2",
+      role: "Mobile Application Development Intern",
+      company: "Accent Techno Soft",
+      period: "Earlier",
+      points: [
+        "Gained foundational knowledge in mobile app design and development",
+        "Worked across testing and debugging cycles for production-ready builds",
+      ],
+    },
+  ],
+  socials: {
+    github: "https://github.com/AlenVVarughese",
+    linkedin: "https://www.linkedin.com/in/alen-v-varughese-a035b424b/",
+    email: "alenvarughese25@gmail.com",
+    phone: "+91 97903 84795",
+  },
   emailjs: {
-    serviceId: "",
-    templateId: "",
-    publicKey: "",
+    serviceId: "service_kinhg51",
+    templateId: "template_3b1difg",
+    publicKey: "frVODCn-1Ih8InFwy",
     toEmail: "alenvarughese25@gmail.com",
   },
 };
 
-const STORAGE_KEY = "alenv_portfolio_v1";
+const STORAGE_KEY = "alenv_portfolio_v2";
 
 type Ctx = {
   data: PortfolioData;
@@ -192,7 +277,12 @@ export function PortfolioProvider({ children }: { children: ReactNode }) {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         const parsed = JSON.parse(raw);
-        setDataState({ ...DEFAULT_DATA, ...parsed, emailjs: { ...DEFAULT_DATA.emailjs, ...(parsed.emailjs || {}) } });
+        setDataState({
+          ...DEFAULT_DATA,
+          ...parsed,
+          socials: { ...DEFAULT_DATA.socials, ...(parsed.socials || {}) },
+          emailjs: { ...DEFAULT_DATA.emailjs, ...(parsed.emailjs || {}) },
+        });
       }
     } catch {}
   }, []);
