@@ -6,12 +6,14 @@ import { SectionLabel } from "./About";
 import { Magnetic } from "./Magnetic";
 import { usePortfolio } from "@/lib/portfolio-store";
 
-const socials = [
-  { label: "GitHub", handle: "@alenvvarughese", href: "https://github.com/alenvvarughese", icon: Github },
-  { label: "LinkedIn", handle: "alen-v-varughese", href: "https://linkedin.com/in/alen-v-varughese-a035b424b", icon: Linkedin },
-  { label: "Email", handle: "alenvarughese25@gmail.com", href: "mailto:alenvarughese25@gmail.com", icon: Mail },
-  { label: "Phone", handle: "+91 97903 84795", href: "tel:+919790384795", icon: Phone },
-];
+const handleFromUrl = (u: string) => {
+  try {
+    const x = u.replace(/\/$/, "").split("/").pop() || u;
+    return x;
+  } catch {
+    return u;
+  }
+};
 
 export function Contact() {
   const { data } = usePortfolio();
