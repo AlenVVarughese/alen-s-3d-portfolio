@@ -22,6 +22,13 @@ export function Contact() {
   const [errMsg, setErrMsg] = useState("");
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
 
+  const socials = [
+    { label: "GitHub", handle: `@${handleFromUrl(data.socials.github)}`, href: data.socials.github, icon: Github },
+    { label: "LinkedIn", handle: handleFromUrl(data.socials.linkedin), href: data.socials.linkedin, icon: Linkedin },
+    { label: "Email", handle: data.socials.email, href: `mailto:${data.socials.email}`, icon: Mail },
+    { label: "Phone", handle: data.socials.phone, href: `tel:${data.socials.phone.replace(/\s+/g, "")}`, icon: Phone },
+  ];
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     const cfg = data.emailjs;
@@ -175,7 +182,7 @@ export function Contact() {
       </div>
 
       <footer className="mt-24 pt-8 border-t border-border/40 text-center font-mono text-xs text-muted-foreground">
-        <p>© 2026 ALEN V VARUGHESE — Architecturalizing Intelligence.</p>
+        <p>{data.footerText}</p>
       </footer>
     </section>
   );
