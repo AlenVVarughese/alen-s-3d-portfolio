@@ -77,14 +77,18 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Lovable App" },
-      { name: "description", content: "Lovable Generated Project" },
+      { title: "Alen_Portfolio" },
+      { name: "description", content: "A premium 3D portfolio website showcasing data science expertise with interactive glassmorphism and kinetic animations." },
       { name: "author", content: "Lovable" },
-      { property: "og:title", content: "Lovable App" },
-      { property: "og:description", content: "Lovable Generated Project" },
+      { property: "og:title", content: "Alen_Portfolio" },
+      { property: "og:description", content: "A premium 3D portfolio website showcasing data science expertise with interactive glassmorphism and kinetic animations." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@Lovable" },
+      { name: "twitter:title", content: "Alen_Portfolio" },
+      { name: "twitter:description", content: "A premium 3D portfolio website showcasing data science expertise with interactive glassmorphism and kinetic animations." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fcbc7dfe-bf44-4d62-8257-43416d71672c/id-preview-fa6ca209--32c7531f-548c-4046-96b5-51a653ee1e2b.lovable.app-1780510365121.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/fcbc7dfe-bf44-4d62-8257-43416d71672c/id-preview-fa6ca209--32c7531f-548c-4046-96b5-51a653ee1e2b.lovable.app-1780510365121.png" },
     ],
     links: [
       {
