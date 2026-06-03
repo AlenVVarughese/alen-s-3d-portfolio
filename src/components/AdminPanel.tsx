@@ -1,12 +1,20 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Settings, X, Plus, Trash2, RotateCcw, Save } from "lucide-react";
-import { usePortfolio, uid, type ProjectItem, type PortfolioData } from "@/lib/portfolio-store";
+import {
+  usePortfolio,
+  uid,
+  type ProjectItem,
+  type PortfolioData,
+  type ExperienceItem,
+} from "@/lib/portfolio-store";
+
+type Tab = "profile" | "content" | "marks" | "skills" | "projects" | "experience" | "socials" | "email";
 
 export function AdminPanel() {
   const { data, setData, reset, editMode, setEditMode } = usePortfolio();
   const [draft, setDraft] = useState<PortfolioData>(data);
-  const [tab, setTab] = useState<"profile" | "marks" | "projects" | "email">("profile");
+  const [tab, setTab] = useState<Tab>("profile");
   const [saved, setSaved] = useState(false);
 
   const open = editMode;
@@ -42,9 +50,16 @@ export function AdminPanel() {
       projects: draft.projects.map((p) => (p.id === id ? { ...p, ...patch } : p)),
     });
 
+  const updateExp = (id: string, patch: Partial<ExperienceItem>) =>
+    setDraft({
+      ...draft,
+      experience: draft.experience.map((x) => (x.id === id ? { ...x, ...patch } : x)),
+    });
+
+  const tabs: Tab[] = ["profile", "content", "marks", "skills", "projects", "experience", "socials", "email"];
+
   return (
     <>
-      {/* Floating toggle */}
       <button
         onClick={() => setOpen(!open)}
         className="fixed bottom-6 right-6 z-[80] size-14 rounded-full bg-gold text-primary-foreground shadow-[0_15px_40px_-10px] shadow-gold/70 grid place-items-center hover:scale-110 transition-transform"
@@ -84,7 +99,6 @@ export function AdminPanel() {
                       }
                     }}
                     className="text-xs font-mono px-2 py-1.5 rounded border border-border text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
-                    title="Reset"
                   >
                     <RotateCcw className="size-3" /> RESET
                   </button>
@@ -100,9 +114,8 @@ export function AdminPanel() {
                 </div>
               </div>
 
-              {/* Tabs */}
-              <div className="px-5 pt-4 flex gap-1 border-b border-border">
-                {(["profile", "marks", "projects", "email"] as const).map((t) => (
+              <div className="px-5 pt-4 flex flex-wrap gap-1 border-b border-border">
+                {tabs.map((t) => (
                   <button
                     key={t}
                     onClick={() => setTab(t)}
@@ -120,11 +133,7 @@ export function AdminPanel() {
               <div className="p-5 space-y-6">
                 {tab === "profile" && (
                   <div className="space-y-4">
-                    <Field
-                      label="Profile Name"
-                      value={draft.profileName}
-                      onChange={(v) => setDraft({ ...draft, profileName: v })}
-                    />
+                    <Field label="Profile Name" value={draft.profileName} onChange={(v) => setDraft({ ...draft, profileName: v })} />
                     <Field
                       label="Profile Video/Image URL (webm, mp4, png, jpg)"
                       value={draft.profileVideoUrl}
@@ -133,6 +142,9 @@ export function AdminPanel() {
                     <div className="rounded-xl border border-border p-3">
                       <div className="text-[10px] font-mono text-muted-foreground mb-2">PREVIEW</div>
                       <ProfilePreview url={draft.profileVideoUrl} />
+                      <p className="text-[10px] text-muted-foreground mt-2 text-center">
+                        Tip: click the speaker icon on the live video to enable audio.
+                      </p>
                     </div>
 
                     <div>
@@ -195,6 +207,18 @@ export function AdminPanel() {
                   </div>
                 )}
 
+                {tab === "content" && (
+                  <div className="space-y-4">
+                    <Field label="Availability Badge" value={draft.availability} onChange={(v) => setDraft({ ...draft, availability: v })} />
+                    <TextareaField label="Hero Tagline" value={draft.tagline} onChange={(v) => setDraft({ ...draft, tagline: v })} />
+                    <TextareaField label="Hero Subtitle" value={draft.subtitle} onChange={(v) => setDraft({ ...draft, subtitle: v })} />
+                    <Field label="About Heading" value={draft.aboutHeading} onChange={(v) => setDraft({ ...draft, aboutHeading: v })} />
+                    <TextareaField label="About Paragraph 1" value={draft.aboutBody1} onChange={(v) => setDraft({ ...draft, aboutBody1: v })} />
+                    <TextareaField label="About Paragraph 2" value={draft.aboutBody2} onChange={(v) => setDraft({ ...draft, aboutBody2: v })} />
+                    <Field label="Footer Text" value={draft.footerText} onChange={(v) => setDraft({ ...draft, footerText: v })} />
+                  </div>
+                )}
+
                 {tab === "marks" && (
                   <div className="space-y-3">
                     {draft.education.map((e) => (
@@ -237,6 +261,37 @@ export function AdminPanel() {
                   </div>
                 )}
 
+                {tab === "skills" && (
+                  <div className="space-y-2">
+                    {draft.skills.map((s) => (
+                      <div key={s.id} className="grid grid-cols-[1fr,auto] gap-2">
+                        <input
+                          className="bg-muted/30 border border-border rounded px-2 py-1.5 text-sm"
+                          value={s.name}
+                          onChange={(e) =>
+                            setDraft({
+                              ...draft,
+                              skills: draft.skills.map((x) => (x.id === s.id ? { ...x, name: e.target.value } : x)),
+                            })
+                          }
+                        />
+                        <button
+                          onClick={() => setDraft({ ...draft, skills: draft.skills.filter((x) => x.id !== s.id) })}
+                          className="text-destructive p-1"
+                        >
+                          <Trash2 className="size-4" />
+                        </button>
+                      </div>
+                    ))}
+                    <button
+                      onClick={() => setDraft({ ...draft, skills: [...draft.skills, { id: uid(), name: "New Skill" }] })}
+                      className="text-xs font-mono text-gold inline-flex items-center gap-1"
+                    >
+                      <Plus className="size-3" /> ADD SKILL
+                    </button>
+                  </div>
+                )}
+
                 {tab === "projects" && (
                   <div className="space-y-3">
                     <button
@@ -265,11 +320,7 @@ export function AdminPanel() {
                             <option>Web Development</option>
                           </select>
                         </div>
-                        <TextareaField
-                          label="Description"
-                          value={p.desc}
-                          onChange={(v) => updateProject(p.id, { desc: v })}
-                        />
+                        <TextareaField label="Description" value={p.desc} onChange={(v) => updateProject(p.id, { desc: v })} />
                         <Field
                           label="Stack (comma separated)"
                           value={p.stack.join(", ")}
@@ -300,9 +351,7 @@ export function AdminPanel() {
                                 }}
                               />
                               <button
-                                onClick={() =>
-                                  updateProject(p.id, { metrics: p.metrics.filter((_, j) => j !== i) })
-                                }
+                                onClick={() => updateProject(p.id, { metrics: p.metrics.filter((_, j) => j !== i) })}
                                 className="text-destructive"
                               >
                                 <Trash2 className="size-4" />
@@ -311,9 +360,7 @@ export function AdminPanel() {
                           ))}
                           <button
                             onClick={() =>
-                              updateProject(p.id, {
-                                metrics: [...p.metrics, { label: "Metric", value: "Value" }],
-                              })
+                              updateProject(p.id, { metrics: [...p.metrics, { label: "Metric", value: "Value" }] })
                             }
                             className="mt-2 text-xs font-mono text-gold inline-flex items-center gap-1"
                           >
@@ -325,11 +372,76 @@ export function AdminPanel() {
                   </div>
                 )}
 
+                {tab === "experience" && (
+                  <div className="space-y-3">
+                    <button
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          experience: [
+                            { id: uid(), role: "Role", company: "Company", period: "Period", points: ["Achievement"] },
+                            ...draft.experience,
+                          ],
+                        })
+                      }
+                      className="w-full py-2 rounded-lg bg-gold/10 text-gold border border-gold/30 font-mono text-xs inline-flex items-center justify-center gap-1"
+                    >
+                      <Plus className="size-3" /> ADD EXPERIENCE
+                    </button>
+                    {draft.experience.map((x) => (
+                      <div key={x.id} className="glass rounded-xl p-3 space-y-2">
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() =>
+                              setDraft({ ...draft, experience: draft.experience.filter((e) => e.id !== x.id) })
+                            }
+                            className="text-destructive"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
+                        <Field label="Role" value={x.role} onChange={(v) => updateExp(x.id, { role: v })} />
+                        <Field label="Company" value={x.company} onChange={(v) => updateExp(x.id, { company: v })} />
+                        <Field label="Period" value={x.period} onChange={(v) => updateExp(x.id, { period: v })} />
+                        <TextareaField
+                          label="Bullet Points (one per line)"
+                          value={x.points.join("\n")}
+                          onChange={(v) => updateExp(x.id, { points: v.split("\n").map((s) => s.trim()).filter(Boolean) })}
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {tab === "socials" && (
+                  <div className="space-y-3">
+                    <Field
+                      label="GitHub URL"
+                      value={draft.socials.github}
+                      onChange={(v) => setDraft({ ...draft, socials: { ...draft.socials, github: v } })}
+                    />
+                    <Field
+                      label="LinkedIn URL"
+                      value={draft.socials.linkedin}
+                      onChange={(v) => setDraft({ ...draft, socials: { ...draft.socials, linkedin: v } })}
+                    />
+                    <Field
+                      label="Email"
+                      value={draft.socials.email}
+                      onChange={(v) => setDraft({ ...draft, socials: { ...draft.socials, email: v } })}
+                    />
+                    <Field
+                      label="Phone"
+                      value={draft.socials.phone}
+                      onChange={(v) => setDraft({ ...draft, socials: { ...draft.socials, phone: v } })}
+                    />
+                  </div>
+                )}
+
                 {tab === "email" && (
                   <div className="space-y-3">
                     <p className="text-xs text-muted-foreground leading-relaxed">
-                      Connect your EmailJS account so the contact form delivers messages to your inbox.
-                      Get these from{" "}
+                      EmailJS keys (already pre-filled with your account). Update any time at{" "}
                       <a className="text-gold underline" href="https://dashboard.emailjs.com" target="_blank" rel="noreferrer">
                         dashboard.emailjs.com
                       </a>
@@ -356,7 +468,7 @@ export function AdminPanel() {
                       onChange={(v) => setDraft({ ...draft, emailjs: { ...draft.emailjs, toEmail: v } })}
                     />
                     <div className="rounded-lg border border-border p-3 text-xs text-muted-foreground space-y-1 font-mono">
-                      <div>Template vars to use: {"{{from_name}}, {{from_email}}, {{message}}, {{to_email}}"}</div>
+                      <div>Template vars: {"{{from_name}}, {{from_email}}, {{message}}, {{to_email}}"}</div>
                     </div>
                   </div>
                 )}
