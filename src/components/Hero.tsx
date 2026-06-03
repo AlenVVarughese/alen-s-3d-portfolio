@@ -68,7 +68,7 @@ export function Hero() {
       </motion.div>
 
       <div className="relative z-10 container mx-auto px-6 grid lg:grid-cols-12 gap-10 items-center">
-        <div className="lg:col-span-7 space-y-7">
+        <div className="lg:col-span-7 space-y-7 flex flex-col items-center lg:items-center">
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -83,7 +83,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, delay: 0.1 }}
-            className="font-display font-bold leading-[0.95] tracking-tight text-5xl sm:text-6xl lg:text-7xl"
+            className="font-display font-bold leading-[0.95] tracking-tight text-5xl sm:text-6xl lg:text-7xl text-center"
           >
             ALEN V <br />
             <span className="text-gradient-gold">VARUGHESE</span>
@@ -93,7 +93,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.25 }}
-            className="text-lg sm:text-xl text-muted-foreground max-w-xl"
+            className="text-lg sm:text-xl text-muted-foreground max-w-xl text-center mx-auto"
           >
             {data.tagline}
             <span className="block mt-2 text-sm font-mono text-teal/80">
@@ -105,7 +105,7 @@ export function Hero() {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.7, delay: 0.4 }}
-            className="flex flex-wrap items-center gap-4"
+            className="flex flex-wrap items-center justify-center gap-4"
           >
             <Magnetic>
               <a
@@ -131,7 +131,7 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="flex gap-8 pt-6 font-mono text-xs flex-wrap"
+            className="flex gap-8 pt-6 font-mono text-xs flex-wrap justify-center"
           >
             {data.heroStats.map((s) => (
               <div key={s.id}>
@@ -151,7 +151,7 @@ export function Hero() {
             <div className="absolute inset-0 glass glass-gold rounded-3xl p-6 flex flex-col">
               <div className="absolute inset-x-0 top-0 seam-gold" />
               <div className="flex justify-between items-center text-[10px] font-mono text-gold/80 tracking-widest">
-                <span>EXHIBIT_01</span>
+                <span>ID_CARD</span>
                 <span>● LIVE</span>
               </div>
 
@@ -163,8 +163,8 @@ export function Hero() {
                 <ProfileMedia url={data.profileVideoUrl} className="absolute inset-0" withAudioToggle />
                 <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex justify-between font-mono text-[9px] text-teal/70">
-                  <span>LAT 10.9°N</span>
-                  <span>LON 76.9°E</span>
+                  <span>Hello! Welcome to my portfolio.</span>
+                  <span>Explore my portfolio</span>
                 </div>
                 <div className="absolute bottom-8 left-3 right-3 font-mono text-[10px] text-muted-foreground text-center">
                   {data.profileName}
