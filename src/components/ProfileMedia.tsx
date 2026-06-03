@@ -13,9 +13,20 @@ export function ProfileMedia({ url, className = "", withAudioToggle = false, def
   const ref = useRef<HTMLVideoElement>(null);
   const [muted, setMuted] = useState(defaultMuted);
 
+  // Build cloudinary mp4 fallback (Safari/iOS doesn't support webm/vp9)
+  const mp4Url = url
+    .replace("/video/upload/", "/video/upload/f_mp4,vc_h264/")
+    .replace(/\.webm(\?|$)/i, ".mp4$1");
+  const isCloudinary = /res\.cloudinary\.com/.test(url);
+
   useEffect(() => {
-    if (ref.current) ref.current.muted = muted;
-  }, [muted]);
+    if (ref.current) {
+      ref.current.muted = muted;
+      // ensure play after mount (some browsers ignore autoplay attr on hydration)
+      const p = ref.current.play();
+      if (p && typeof p.catch === "function") p.catch(() => {});
+    }
+  }, [muted, url]);
 
   const toggle = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -37,13 +48,18 @@ export function ProfileMedia({ url, className = "", withAudioToggle = false, def
         <video
           ref={ref}
           key={url}
-          src={url}
           autoPlay
           loop
           muted={muted}
           playsInline
+          preload="auto"
+          poster={isCloudinary ? url.replace("/video/upload/", "/video/upload/so_0/").replace(/\.(webm|mp4|mov)(\?|$)/i, ".jpg$2") : undefined}
+          crossOrigin="anonymous"
           className="w-full h-full object-cover"
-        />
+        >
+          {isCloudinary && <source src={mp4Url} type="video/mp4" />}
+          <source src={url} type={/\.webm/i.test(url) ? "video/webm" : "video/mp4"} />
+        </video>
       ) : (
         <img src={url} alt="Profile" className="w-full h-full object-cover" />
       )}
