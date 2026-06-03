@@ -2,8 +2,11 @@ import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect } from "react";
 import { Magnetic } from "./Magnetic";
 import { ArrowDown, Sparkles } from "lucide-react";
+import { usePortfolio } from "@/lib/portfolio-store";
+import { ProfileMedia } from "./ProfileMedia";
 
 export function Hero() {
+  const { data } = usePortfolio();
   const mx = useMotionValue(0);
   const my = useMotionValue(0);
   const xs = useSpring(mx, { stiffness: 80, damping: 20 });
@@ -41,6 +44,28 @@ export function Hero() {
       </div>
       <div className="absolute inset-0 radial-glow pointer-events-none" />
       <div className="absolute inset-0 bg-gradient-to-b from-transparent via-transparent to-background pointer-events-none" />
+
+      {/* Small floating stage — orbital video */}
+      <motion.div
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 0.6, duration: 0.8 }}
+        className="hidden sm:flex absolute top-28 right-6 lg:right-12 z-20 items-center gap-2"
+      >
+        <div className="text-right">
+          <div className="font-mono text-[9px] tracking-widest text-teal/80">◆ LIVE.STAGE</div>
+          <div className="font-mono text-[9px] text-muted-foreground">SIGNAL_01</div>
+        </div>
+        <motion.div
+          animate={{ y: [0, -6, 0] }}
+          transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+          className="relative size-20 lg:size-24 rounded-2xl overflow-hidden border border-gold/40 shadow-[0_15px_40px_-10px] shadow-gold/30"
+        >
+          <ProfileMedia url={data.profileVideoUrl} className="absolute inset-0" />
+          <div className="absolute inset-0 ring-1 ring-inset ring-gold/30 rounded-2xl pointer-events-none" />
+          <div className="absolute top-1 left-1 size-1.5 rounded-full bg-teal animate-pulse" />
+        </motion.div>
+      </motion.div>
 
       <div className="relative z-10 container mx-auto px-6 grid lg:grid-cols-12 gap-10 items-center">
         <div className="lg:col-span-7 space-y-7">
@@ -106,16 +131,12 @@ export function Hero() {
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             transition={{ delay: 0.7 }}
-            className="flex gap-8 pt-6 font-mono text-xs"
+            className="flex gap-8 pt-6 font-mono text-xs flex-wrap"
           >
-            {[
-              { v: "8+", l: "PROJECTS" },
-              { v: "2", l: "INTERNSHIPS" },
-              { v: "77.5%", l: "M.SC SCORE" },
-            ].map((s) => (
-              <div key={s.l}>
-                <div className="text-2xl font-bold text-gradient-gold">{s.v}</div>
-                <div className="text-muted-foreground tracking-widest">{s.l}</div>
+            {data.heroStats.map((s) => (
+              <div key={s.id}>
+                <div className="text-2xl font-bold text-gradient-gold">{s.value}</div>
+                <div className="text-muted-foreground tracking-widest">{s.label}</div>
               </div>
             ))}
           </motion.div>
@@ -139,19 +160,14 @@ export function Hero() {
                 style={{ transform: "translateZ(40px)" }}
               >
                 <div className="absolute inset-0 grid-bg-fine opacity-50" />
-                <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-center">
-                    <div className="size-32 mx-auto rounded-full bg-gradient-to-br from-gold/40 to-teal/30 border-2 border-gold/60 flex items-center justify-center text-5xl font-display font-bold text-gradient-gold shadow-2xl">
-                      AV
-                    </div>
-                    <div className="mt-4 font-mono text-xs text-muted-foreground">
-                      ALEN.V.VARUGHESE
-                    </div>
-                  </div>
-                </div>
+                <ProfileMedia url={data.profileVideoUrl} className="absolute inset-0" />
+                <div className="absolute inset-0 bg-gradient-to-t from-background/90 via-background/20 to-transparent" />
                 <div className="absolute bottom-3 left-3 right-3 flex justify-between font-mono text-[9px] text-teal/70">
                   <span>LAT 10.9°N</span>
                   <span>LON 76.9°E</span>
+                </div>
+                <div className="absolute bottom-8 left-3 right-3 font-mono text-[10px] text-muted-foreground text-center">
+                  {data.profileName}
                 </div>
               </div>
 
