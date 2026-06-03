@@ -1,48 +1,63 @@
-import { useState, type FormEvent } from "react";
+import { useState, useRef, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Github, Linkedin, Mail, Phone, Check, Send } from "lucide-react";
+import { Github, Linkedin, Mail, Phone, Check, Send, AlertCircle } from "lucide-react";
+import emailjs from "@emailjs/browser";
 import { SectionLabel } from "./About";
 import { Magnetic } from "./Magnetic";
+import { usePortfolio } from "@/lib/portfolio-store";
 
 const socials = [
-  {
-    label: "GitHub",
-    handle: "@alenvvarughese",
-    href: "https://github.com/alenvvarughese",
-    icon: Github,
-  },
-  {
-    label: "LinkedIn",
-    handle: "alen-v-varughese",
-    href: "https://linkedin.com/in/alen-v-varughese-a035b424b",
-    icon: Linkedin,
-  },
-  {
-    label: "Email",
-    handle: "alenvarughese25@gmail.com",
-    href: "mailto:alenvarughese25@gmail.com",
-    icon: Mail,
-  },
-  {
-    label: "Phone",
-    handle: "+91 97903 84795",
-    href: "tel:+919790384795",
-    icon: Phone,
-  },
+  { label: "GitHub", handle: "@alenvvarughese", href: "https://github.com/alenvvarughese", icon: Github },
+  { label: "LinkedIn", handle: "alen-v-varughese", href: "https://linkedin.com/in/alen-v-varughese-a035b424b", icon: Linkedin },
+  { label: "Email", handle: "alenvarughese25@gmail.com", href: "mailto:alenvarughese25@gmail.com", icon: Mail },
+  { label: "Phone", handle: "+91 97903 84795", href: "tel:+919790384795", icon: Phone },
 ];
 
 export function Contact() {
-  const [sent, setSent] = useState(false);
+  const { data } = usePortfolio();
+  const formRef = useRef<HTMLFormElement>(null);
+  const [status, setStatus] = useState<"idle" | "sending" | "sent" | "error">("idle");
+  const [errMsg, setErrMsg] = useState("");
   const [form, setForm] = useState({ name: "", email: "", msg: "" });
 
-  const handleSubmit = (e: FormEvent) => {
+  const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
-    setSent(true);
-    setTimeout(() => {
-      setSent(false);
-      setForm({ name: "", email: "", msg: "" });
-    }, 3500);
+    const cfg = data.emailjs;
+    if (!cfg.serviceId || !cfg.templateId || !cfg.publicKey) {
+      setErrMsg("EmailJS not configured. Open the Editor (gear icon) → Email tab to add your keys.");
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4500);
+      return;
+    }
+    setStatus("sending");
+    try {
+      await emailjs.send(
+        cfg.serviceId,
+        cfg.templateId,
+        {
+          from_name: form.name,
+          from_email: form.email,
+          message: form.msg,
+          to_email: cfg.toEmail,
+          reply_to: form.email,
+        },
+        { publicKey: cfg.publicKey },
+      );
+      setStatus("sent");
+      setTimeout(() => {
+        setStatus("idle");
+        setForm({ name: "", email: "", msg: "" });
+      }, 3500);
+    } catch (err: unknown) {
+      const m = err instanceof Error ? err.message : "Failed to send. Check your EmailJS config.";
+      setErrMsg(m);
+      setStatus("error");
+      setTimeout(() => setStatus("idle"), 4500);
+    }
   };
+
+  const sent = status === "sent";
+  const sending = status === "sending";
 
   return (
     <section id="contact" className="relative py-32 px-6">
@@ -53,11 +68,8 @@ export function Contact() {
         </h2>
 
         <div className="grid lg:grid-cols-5 gap-6">
-          {/* Networks */}
           <div className="lg:col-span-2 space-y-3">
-            <div className="font-mono text-xs tracking-widest text-muted-foreground mb-3">
-              ◆ NETWORKS
-            </div>
+            <div className="font-mono text-xs tracking-widest text-muted-foreground mb-3">◆ NETWORKS</div>
             {socials.map((s, i) => (
               <motion.a
                 key={s.label}
@@ -75,18 +87,13 @@ export function Contact() {
                   <s.icon className="size-5" />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <div className="font-mono text-[10px] tracking-widest text-muted-foreground">
-                    {s.label.toUpperCase()}
-                  </div>
-                  <div className="font-medium truncate group-hover:text-gold transition-colors">
-                    {s.handle}
-                  </div>
+                  <div className="font-mono text-[10px] tracking-widest text-muted-foreground">{s.label.toUpperCase()}</div>
+                  <div className="font-medium truncate group-hover:text-gold transition-colors">{s.handle}</div>
                 </div>
               </motion.a>
             ))}
           </div>
 
-          {/* Form Console */}
           <div className="lg:col-span-3">
             <div className="glass glass-teal rounded-3xl p-8 relative overflow-hidden">
               <div className="absolute inset-x-0 top-0 seam-gold" />
@@ -95,51 +102,29 @@ export function Contact() {
                 <span className="text-teal">● ENCRYPTED</span>
               </div>
 
-              <form onSubmit={handleSubmit} className="space-y-5">
-                <FloatingInput
-                  label="YOUR NAME"
-                  value={form.name}
-                  onChange={(v) => setForm({ ...form, name: v })}
-                />
-                <FloatingInput
-                  label="EMAIL ADDRESS"
-                  type="email"
-                  value={form.email}
-                  onChange={(v) => setForm({ ...form, email: v })}
-                />
-                <FloatingInput
-                  label="MESSAGE"
-                  textarea
-                  value={form.msg}
-                  onChange={(v) => setForm({ ...form, msg: v })}
-                />
+              <form ref={formRef} onSubmit={handleSubmit} className="space-y-5">
+                <FloatingInput label="YOUR NAME" value={form.name} onChange={(v) => setForm({ ...form, name: v })} />
+                <FloatingInput label="EMAIL ADDRESS" type="email" value={form.email} onChange={(v) => setForm({ ...form, email: v })} />
+                <FloatingInput label="MESSAGE" textarea value={form.msg} onChange={(v) => setForm({ ...form, msg: v })} />
 
                 <Magnetic strength={0.2}>
                   <motion.button
                     whileTap={{ scale: 0.95 }}
                     type="submit"
-                    disabled={sent}
-                    className="relative w-full py-4 rounded-xl bg-gold text-primary-foreground font-mono text-sm tracking-widest font-bold overflow-hidden shadow-[0_20px_50px_-12px] shadow-gold/50"
+                    disabled={sending || sent}
+                    className="relative w-full py-4 rounded-xl bg-gold text-primary-foreground font-mono text-sm tracking-widest font-bold overflow-hidden shadow-[0_20px_50px_-12px] shadow-gold/50 disabled:opacity-70"
                   >
                     <AnimatePresence mode="wait">
                       {sent ? (
-                        <motion.span
-                          key="ok"
-                          initial={{ y: 20, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          exit={{ y: -20, opacity: 0 }}
-                          className="flex items-center justify-center gap-2"
-                        >
+                        <motion.span key="ok" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className="flex items-center justify-center gap-2">
                           <Check className="size-5" /> TRANSMISSION COMPLETE
                         </motion.span>
+                      ) : sending ? (
+                        <motion.span key="sending" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className="flex items-center justify-center gap-2">
+                          TRANSMITTING…
+                        </motion.span>
                       ) : (
-                        <motion.span
-                          key="send"
-                          initial={{ y: 20, opacity: 0 }}
-                          animate={{ y: 0, opacity: 1 }}
-                          exit={{ y: -20, opacity: 0 }}
-                          className="flex items-center justify-center gap-2"
-                        >
+                        <motion.span key="send" initial={{ y: 20, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: -20, opacity: 0 }} className="flex items-center justify-center gap-2">
                           TRANSMIT MESSAGE <Send className="size-4" />
                         </motion.span>
                       )}
@@ -148,19 +133,33 @@ export function Contact() {
                 </Magnetic>
 
                 <AnimatePresence>
+                  {status === "error" && (
+                    <motion.div
+                      initial={{ opacity: 0, y: -8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0 }}
+                      className="flex items-start gap-2 text-xs font-mono text-destructive bg-destructive/10 border border-destructive/30 rounded-lg p-3"
+                    >
+                      <AlertCircle className="size-4 mt-0.5 shrink-0" />
+                      <span>{errMsg}</span>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+
+                <AnimatePresence>
                   {sent && (
                     <>
-                      {[...Array(10)].map((_, i) => (
+                      {[...Array(12)].map((_, i) => (
                         <motion.span
                           key={i}
                           initial={{ opacity: 1, x: 0, y: 0, scale: 1 }}
                           animate={{
                             opacity: 0,
-                            x: (Math.random() - 0.5) * 200,
-                            y: (Math.random() - 0.5) * 200,
+                            x: (Math.random() - 0.5) * 220,
+                            y: (Math.random() - 0.5) * 220,
                             scale: 0,
                           }}
-                          transition={{ duration: 1.2 }}
+                          transition={{ duration: 1.3 }}
                           className="pointer-events-none absolute left-1/2 bottom-12 size-2 rounded-full bg-gold"
                         />
                       ))}

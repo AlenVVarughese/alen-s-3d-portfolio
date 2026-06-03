@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { GraduationCap } from "lucide-react";
 import { TiltCard } from "./TiltCard";
+import { usePortfolio } from "@/lib/portfolio-store";
 
 const skills = [
   "Python", "SQL", "R", "PySpark",
@@ -8,28 +9,9 @@ const skills = [
   "Excel", "Pandas", "Matplotlib", "Seaborn",
 ];
 
-const education = [
-  {
-    school: "Rathinam College of Arts & Science",
-    degree: "M.Sc — Data Science & Business Analytics",
-    period: "2025 – 2027",
-    score: "77.5%",
-  },
-  {
-    school: "Sri Ramakrishna College of Arts & Science",
-    degree: "Bachelor of Computer Applications",
-    period: "2022 – 2025",
-    score: "80.2%",
-  },
-  {
-    school: "Sri Ramakrishna Matric. Hr. Sec. School",
-    degree: "Higher Secondary (Class XII)",
-    period: "2021 – 2022",
-    score: "92.2%",
-  },
-];
-
 export function About() {
+  const { data } = usePortfolio();
+  const education = data.education;
   return (
     <section id="about" className="relative py-32 px-6">
       <div className="container mx-auto max-w-6xl">

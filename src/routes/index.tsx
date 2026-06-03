@@ -5,6 +5,8 @@ import { About } from "@/components/About";
 import { Projects } from "@/components/Projects";
 import { Experience } from "@/components/Experience";
 import { Contact } from "@/components/Contact";
+import { AdminPanel } from "@/components/AdminPanel";
+import { PortfolioProvider } from "@/lib/portfolio-store";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -28,14 +30,18 @@ export const Route = createFileRoute("/")({
 
 function Index() {
   return (
-    <main className="relative bg-background text-foreground">
-      <div className="fixed inset-0 -z-10 grid-bg opacity-20 pointer-events-none" />
-      <Nav />
-      <Hero />
-      <About />
-      <Projects />
-      <Experience />
-      <Contact />
-    </main>
+    <PortfolioProvider>
+      <main className="relative bg-background text-foreground">
+        <div className="fixed inset-0 -z-10 grid-bg opacity-20 pointer-events-none" />
+        <Nav />
+        <Hero />
+        <About />
+        <Projects />
+        <Experience />
+        <Contact />
+        <AdminPanel />
+      </main>
+    </PortfolioProvider>
   );
 }
+
