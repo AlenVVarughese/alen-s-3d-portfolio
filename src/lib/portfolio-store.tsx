@@ -295,6 +295,7 @@ function mergePortfolioData(source: Partial<PortfolioData> | null | undefined): 
     ...(source || {}),
     socials: { ...DEFAULT_DATA.socials, ...(source?.socials || {}) },
     emailjs: { ...DEFAULT_DATA.emailjs, ...(source?.emailjs || {}) },
+    certifications: source?.certifications ?? DEFAULT_DATA.certifications,
   };
 }
 
