@@ -128,10 +128,15 @@ export function Hero() {
             {data.resumeUrl && (
               <Magnetic>
                 <a
-                  href={data.resumeUrl}
+                  href={
+                    data.resumeUrl.includes("res.cloudinary.com") &&
+                    !data.resumeUrl.includes("fl_attachment")
+                      ? data.resumeUrl.replace("/upload/", "/upload/fl_attachment/")
+                      : data.resumeUrl
+                  }
                   target="_blank"
                   rel="noreferrer"
-                  download
+                  download="Alen_V_Varughese_Resume.pdf"
                   className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-gold/40 text-gold font-mono text-sm tracking-wider hover:bg-gold hover:text-primary-foreground transition-all"
                 >
                   <Download className="size-4" />
