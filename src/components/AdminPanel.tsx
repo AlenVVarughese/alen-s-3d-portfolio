@@ -246,6 +246,7 @@ export function AdminPanel() {
                     <TextareaField label="About Paragraph 1" value={draft.aboutBody1} onChange={(v) => setDraft({ ...draft, aboutBody1: v })} />
                     <TextareaField label="About Paragraph 2" value={draft.aboutBody2} onChange={(v) => setDraft({ ...draft, aboutBody2: v })} />
                     <Field label="Footer Text" value={draft.footerText} onChange={(v) => setDraft({ ...draft, footerText: v })} />
+                    <Field label="Resume / CV URL (PDF)" value={draft.resumeUrl} onChange={(v) => setDraft({ ...draft, resumeUrl: v })} />
                   </div>
                 )}
 
