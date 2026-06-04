@@ -52,10 +52,19 @@ export interface EmailJsConfig {
   toEmail: string;
 }
 
+export interface CertificationItem {
+  id: string;
+  title: string;
+  issuer: string;
+  year: string;
+  link: string;
+}
+
 export interface PortfolioData {
   profileVideoUrl: string;
   profileName: string;
   profileAudio: boolean;
+  resumeUrl: string;
 
   // Hero content
   tagline: string;
@@ -73,6 +82,7 @@ export interface PortfolioData {
   skills: SkillItem[];
   projects: ProjectItem[];
   experience: ExperienceItem[];
+  certifications: CertificationItem[];
   socials: Socials;
   emailjs: EmailJsConfig;
 }
