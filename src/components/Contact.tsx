@@ -1,7 +1,6 @@
 import { useState, useRef, type FormEvent } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Github, Linkedin, Mail, Phone, Check, Send, AlertCircle } from "lucide-react";
-import emailjs from "@emailjs/browser";
 import { SectionLabel } from "./About";
 import { Magnetic } from "./Magnetic";
 import { usePortfolio } from "@/lib/portfolio-store";
