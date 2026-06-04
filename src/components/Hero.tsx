@@ -1,7 +1,7 @@
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import { useEffect } from "react";
 import { Magnetic } from "./Magnetic";
-import { ArrowDown, Sparkles } from "lucide-react";
+import { ArrowDown, Sparkles, Download } from "lucide-react";
 import { usePortfolio } from "@/lib/portfolio-store";
 import { ProfileMedia } from "./ProfileMedia";
 
