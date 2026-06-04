@@ -9,7 +9,7 @@ import {
   type ExperienceItem,
 } from "@/lib/portfolio-store";
 
-type Tab = "profile" | "content" | "marks" | "skills" | "projects" | "experience" | "socials" | "email";
+type Tab = "profile" | "content" | "marks" | "skills" | "projects" | "experience" | "certs" | "socials" | "email";
 
 export function AdminPanel() {
   const { data, setData, reset, editMode, setEditMode, syncState, hasEditorPin } = usePortfolio();
