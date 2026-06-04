@@ -256,6 +256,11 @@ const DEFAULT_DATA: PortfolioData = {
       ],
     },
   ],
+  certifications: [
+    { id: "c1", title: "Data Analytics with Python", issuer: "NPTEL", year: "2024", link: "" },
+    { id: "c2", title: "Power BI Data Analyst", issuer: "Microsoft Learn", year: "2024", link: "" },
+    { id: "c3", title: "Databricks Lakehouse Fundamentals", issuer: "Databricks", year: "2025", link: "" },
+  ],
   socials: {
     github: "https://github.com/AlenVVarughese",
     linkedin: "https://www.linkedin.com/in/alen-v-varughese-a035b424b/",
