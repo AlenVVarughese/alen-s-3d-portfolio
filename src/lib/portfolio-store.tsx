@@ -1,4 +1,6 @@
 import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
+import { useServerFn } from "@tanstack/react-start";
+import { getPortfolioSettings, savePortfolioSettings } from "@/lib/portfolio.functions";
 
 export interface EduItem {
   id: string;
@@ -260,49 +262,97 @@ const STORAGE_KEY = "alenv_portfolio_v2";
 
 type Ctx = {
   data: PortfolioData;
-  setData: (d: PortfolioData) => void;
-  reset: () => void;
+  setData: (d: PortfolioData, pin?: string) => Promise<{ ok: boolean; error?: string | null }>;
+  reset: (pin?: string) => Promise<{ ok: boolean; error?: string | null }>;
   editMode: boolean;
   setEditMode: (b: boolean) => void;
+  syncState: "loading" | "cloud" | "local" | "error";
+  hasEditorPin: boolean;
 };
 
 const PortfolioCtx = createContext<Ctx | null>(null);
 
+function mergePortfolioData(source: Partial<PortfolioData> | null | undefined): PortfolioData {
+  return {
+    ...DEFAULT_DATA,
+    ...(source || {}),
+    socials: { ...DEFAULT_DATA.socials, ...(source?.socials || {}) },
+    emailjs: { ...DEFAULT_DATA.emailjs, ...(source?.emailjs || {}) },
+  };
+}
+
 export function PortfolioProvider({ children }: { children: ReactNode }) {
   const [data, setDataState] = useState<PortfolioData>(DEFAULT_DATA);
   const [editMode, setEditMode] = useState(false);
+  const [syncState, setSyncState] = useState<Ctx["syncState"]>("loading");
+  const [hasEditorPin, setHasEditorPin] = useState(false);
+  const loadSharedPortfolio = useServerFn(getPortfolioSettings);
+  const saveSharedPortfolio = useServerFn(savePortfolioSettings);
 
   useEffect(() => {
-    try {
-      const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) {
-        const parsed = JSON.parse(raw);
-        setDataState({
-          ...DEFAULT_DATA,
-          ...parsed,
-          socials: { ...DEFAULT_DATA.socials, ...(parsed.socials || {}) },
-          emailjs: { ...DEFAULT_DATA.emailjs, ...(parsed.emailjs || {}) },
-        });
-      }
-    } catch {}
-  }, []);
+    let cancelled = false;
 
-  const setData = (d: PortfolioData) => {
+    async function load() {
+      try {
+        const shared = await loadSharedPortfolio();
+        if (cancelled) return;
+        setHasEditorPin(shared.hasPin);
+        if (shared.data) {
+          const merged = mergePortfolioData(shared.data as Partial<PortfolioData>);
+          setDataState(merged);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+          setSyncState("cloud");
+          return;
+        }
+      } catch {
+        if (cancelled) return;
+        setSyncState("error");
+      }
+
+      try {
+        const raw = localStorage.getItem(STORAGE_KEY);
+        if (raw) setDataState(mergePortfolioData(JSON.parse(raw)));
+        if (!cancelled) setSyncState("local");
+      } catch {
+        if (!cancelled) setSyncState("local");
+      }
+    }
+
+    load();
+    return () => {
+      cancelled = true;
+    };
+  }, [loadSharedPortfolio]);
+
+  const setData = async (d: PortfolioData, pin?: string) => {
     setDataState(d);
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(d));
     } catch {}
+
+    if (!pin?.trim()) {
+      setSyncState("local");
+      return { ok: false, error: "Enter an editor PIN to save changes for every visitor." };
+    }
+
+    try {
+      const result = await saveSharedPortfolio({ data: { data: d, pin } });
+      if (!result.ok) return result;
+      setHasEditorPin(true);
+      setSyncState("cloud");
+      return { ok: true, error: null };
+    } catch {
+      setSyncState("error");
+      return { ok: false, error: "Cloud save failed. Your browser copy was saved only on this device." };
+    }
   };
 
-  const reset = () => {
-    setDataState(DEFAULT_DATA);
-    try {
-      localStorage.removeItem(STORAGE_KEY);
-    } catch {}
+  const reset = async (pin?: string) => {
+    return setData(DEFAULT_DATA, pin);
   };
 
   return (
-    <PortfolioCtx.Provider value={{ data, setData, reset, editMode, setEditMode }}>
+    <PortfolioCtx.Provider value={{ data, setData, reset, editMode, setEditMode, syncState, hasEditorPin }}>
       {children}
     </PortfolioCtx.Provider>
   );

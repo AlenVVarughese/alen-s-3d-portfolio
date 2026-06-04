@@ -12,10 +12,13 @@ import {
 type Tab = "profile" | "content" | "marks" | "skills" | "projects" | "experience" | "socials" | "email";
 
 export function AdminPanel() {
-  const { data, setData, reset, editMode, setEditMode } = usePortfolio();
+  const { data, setData, reset, editMode, setEditMode, syncState, hasEditorPin } = usePortfolio();
   const [draft, setDraft] = useState<PortfolioData>(data);
   const [tab, setTab] = useState<Tab>("profile");
   const [saved, setSaved] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [pin, setPin] = useState("");
+  const [saveError, setSaveError] = useState<string | null>(null);
 
   const open = editMode;
   const setOpen = (v: boolean) => {
@@ -23,8 +26,15 @@ export function AdminPanel() {
     setEditMode(v);
   };
 
-  const save = () => {
-    setData(draft);
+  const save = async () => {
+    setSaving(true);
+    setSaveError(null);
+    const result = await setData(draft, pin);
+    setSaving(false);
+    if (!result.ok) {
+      setSaveError(result.error || "Unable to save changes.");
+      return;
+    }
     setSaved(true);
     setTimeout(() => setSaved(false), 1600);
   };
@@ -94,8 +104,10 @@ export function AdminPanel() {
                   <button
                     onClick={() => {
                       if (confirm("Reset all data to defaults?")) {
-                        reset();
-                        setDraft({ ...data });
+                        reset(pin).then((result) => {
+                          if (!result.ok) setSaveError(result.error || "Unable to reset shared data.");
+                          else setDraft(data);
+                        });
                       }
                     }}
                     className="text-xs font-mono px-2 py-1.5 rounded border border-border text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
@@ -104,9 +116,10 @@ export function AdminPanel() {
                   </button>
                   <button
                     onClick={save}
+                    disabled={saving}
                     className="text-xs font-mono px-3 py-1.5 rounded bg-gold text-primary-foreground font-bold inline-flex items-center gap-1"
                   >
-                    <Save className="size-3" /> {saved ? "SAVED" : "SAVE"}
+                    <Save className="size-3" /> {saving ? "SAVING" : saved ? "SAVED" : "SAVE"}
                   </button>
                   <button onClick={() => setOpen(false)} className="text-muted-foreground hover:text-foreground">
                     <X className="size-5" />
@@ -131,6 +144,23 @@ export function AdminPanel() {
               </div>
 
               <div className="p-5 space-y-6">
+                <div className="rounded-xl border border-gold/25 bg-gold/10 p-3 space-y-2">
+                  <div className="flex items-center justify-between gap-3 text-[10px] font-mono uppercase tracking-widest text-muted-foreground">
+                    <span>Shared Cloud Save</span>
+                    <span className="text-gold">{syncState === "cloud" ? "Live" : syncState}</span>
+                  </div>
+                  <Field
+                    label={hasEditorPin ? "Editor PIN" : "Create Editor PIN"}
+                    value={pin}
+                    type="password"
+                    onChange={(v) => setPin(v)}
+                  />
+                  <p className="text-[11px] leading-relaxed text-muted-foreground">
+                    Use this PIN whenever you save. Saved edits update the published portfolio for every visitor without republishing.
+                  </p>
+                  {saveError && <p className="text-[11px] text-destructive font-mono">{saveError}</p>}
+                </div>
+
                 {tab === "profile" && (
                   <div className="space-y-4">
                     <Field label="Profile Name" value={draft.profileName} onChange={(v) => setDraft({ ...draft, profileName: v })} />
@@ -493,11 +523,22 @@ function updateEdu(
   });
 }
 
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+}) {
   return (
     <div>
       <label className="text-[10px] font-mono text-muted-foreground tracking-widest">{label.toUpperCase()}</label>
       <input
+        type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-muted/30 border border-border rounded px-2 py-1.5 text-sm focus:border-gold focus:outline-none"
