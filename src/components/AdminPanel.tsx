@@ -469,6 +469,81 @@ export function AdminPanel() {
                   </div>
                 )}
 
+                {tab === "certs" && (
+                  <div className="space-y-3">
+                    <button
+                      onClick={() =>
+                        setDraft({
+                          ...draft,
+                          certifications: [
+                            { id: uid(), title: "New Certification", issuer: "Issuer", year: "2025", link: "" },
+                            ...draft.certifications,
+                          ],
+                        })
+                      }
+                      className="w-full py-2 rounded-lg bg-gold/10 text-gold border border-gold/30 font-mono text-xs inline-flex items-center justify-center gap-1"
+                    >
+                      <Plus className="size-3" /> ADD CERTIFICATION
+                    </button>
+                    {draft.certifications.map((c) => (
+                      <div key={c.id} className="glass rounded-xl p-3 space-y-2">
+                        <div className="flex justify-end">
+                          <button
+                            onClick={() =>
+                              setDraft({ ...draft, certifications: draft.certifications.filter((x) => x.id !== c.id) })
+                            }
+                            className="text-destructive"
+                          >
+                            <Trash2 className="size-4" />
+                          </button>
+                        </div>
+                        <Field
+                          label="Title"
+                          value={c.title}
+                          onChange={(v) =>
+                            setDraft({
+                              ...draft,
+                              certifications: draft.certifications.map((x) => (x.id === c.id ? { ...x, title: v } : x)),
+                            })
+                          }
+                        />
+                        <div className="grid grid-cols-2 gap-2">
+                          <Field
+                            label="Issuer"
+                            value={c.issuer}
+                            onChange={(v) =>
+                              setDraft({
+                                ...draft,
+                                certifications: draft.certifications.map((x) => (x.id === c.id ? { ...x, issuer: v } : x)),
+                              })
+                            }
+                          />
+                          <Field
+                            label="Year"
+                            value={c.year}
+                            onChange={(v) =>
+                              setDraft({
+                                ...draft,
+                                certifications: draft.certifications.map((x) => (x.id === c.id ? { ...x, year: v } : x)),
+                              })
+                            }
+                          />
+                        </div>
+                        <Field
+                          label="Verify Link (optional)"
+                          value={c.link}
+                          onChange={(v) =>
+                            setDraft({
+                              ...draft,
+                              certifications: draft.certifications.map((x) => (x.id === c.id ? { ...x, link: v } : x)),
+                            })
+                          }
+                        />
+                      </div>
+                    ))}
+                  </div>
+                )}
+
                 {tab === "email" && (
                   <div className="space-y-3">
                     <p className="text-xs text-muted-foreground leading-relaxed">
