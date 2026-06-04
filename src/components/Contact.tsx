@@ -39,7 +39,8 @@ export function Contact() {
     }
     setStatus("sending");
     try {
-      await emailjs.send(
+      const emailjs = await import("@emailjs/browser");
+      await emailjs.default.send(
         cfg.serviceId,
         cfg.templateId,
         {
