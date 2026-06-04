@@ -52,10 +52,19 @@ export interface EmailJsConfig {
   toEmail: string;
 }
 
+export interface CertificationItem {
+  id: string;
+  title: string;
+  issuer: string;
+  year: string;
+  link: string;
+}
+
 export interface PortfolioData {
   profileVideoUrl: string;
   profileName: string;
   profileAudio: boolean;
+  resumeUrl: string;
 
   // Hero content
   tagline: string;
@@ -73,6 +82,7 @@ export interface PortfolioData {
   skills: SkillItem[];
   projects: ProjectItem[];
   experience: ExperienceItem[];
+  certifications: CertificationItem[];
   socials: Socials;
   emailjs: EmailJsConfig;
 }
@@ -84,6 +94,8 @@ const DEFAULT_DATA: PortfolioData = {
   profileVideoUrl: DEFAULT_VIDEO,
   profileName: "ALEN.V.VARUGHESE",
   profileAudio: false,
+  resumeUrl: "https://res.cloudinary.com/dsjstkis8/image/upload/v1780593624/ALEN_V_Resume_bnnxbe.pdf",
+
 
   tagline:
     "Transforming Raw Data into Meaningful Business Decisions.",
@@ -244,6 +256,11 @@ const DEFAULT_DATA: PortfolioData = {
       ],
     },
   ],
+  certifications: [
+    { id: "c1", title: "Data Analytics with Python", issuer: "NPTEL", year: "2024", link: "" },
+    { id: "c2", title: "Power BI Data Analyst", issuer: "Microsoft Learn", year: "2024", link: "" },
+    { id: "c3", title: "Databricks Lakehouse Fundamentals", issuer: "Databricks", year: "2025", link: "" },
+  ],
   socials: {
     github: "https://github.com/AlenVVarughese",
     linkedin: "https://www.linkedin.com/in/alen-v-varughese-a035b424b/",
@@ -278,6 +295,7 @@ function mergePortfolioData(source: Partial<PortfolioData> | null | undefined): 
     ...(source || {}),
     socials: { ...DEFAULT_DATA.socials, ...(source?.socials || {}) },
     emailjs: { ...DEFAULT_DATA.emailjs, ...(source?.emailjs || {}) },
+    certifications: source?.certifications ?? DEFAULT_DATA.certifications,
   };
 }
 
