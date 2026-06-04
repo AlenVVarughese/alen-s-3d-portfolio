@@ -523,11 +523,22 @@ function updateEdu(
   });
 }
 
-function Field({ label, value, onChange }: { label: string; value: string; onChange: (v: string) => void }) {
+function Field({
+  label,
+  value,
+  onChange,
+  type = "text",
+}: {
+  label: string;
+  value: string;
+  onChange: (v: string) => void;
+  type?: string;
+}) {
   return (
     <div>
       <label className="text-[10px] font-mono text-muted-foreground tracking-widest">{label.toUpperCase()}</label>
       <input
+        type={type}
         value={value}
         onChange={(e) => onChange(e.target.value)}
         className="w-full bg-muted/30 border border-border rounded px-2 py-1.5 text-sm focus:border-gold focus:outline-none"
