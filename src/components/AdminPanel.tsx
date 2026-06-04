@@ -66,7 +66,7 @@ export function AdminPanel() {
       experience: draft.experience.map((x) => (x.id === id ? { ...x, ...patch } : x)),
     });
 
-  const tabs: Tab[] = ["profile", "content", "marks", "skills", "projects", "experience", "socials", "email"];
+  const tabs: Tab[] = ["profile", "content", "marks", "skills", "projects", "experience", "certs", "socials", "email"];
 
   return (
     <>
