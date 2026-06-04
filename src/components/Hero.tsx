@@ -125,6 +125,20 @@ export function Hero() {
                 CONNECT
               </a>
             </Magnetic>
+            {data.resumeUrl && (
+              <Magnetic>
+                <a
+                  href={data.resumeUrl}
+                  target="_blank"
+                  rel="noreferrer"
+                  download
+                  className="inline-flex items-center gap-2 px-6 py-3 rounded-xl border border-gold/40 text-gold font-mono text-sm tracking-wider hover:bg-gold hover:text-primary-foreground transition-all"
+                >
+                  <Download className="size-4" />
+                  DOWNLOAD CV
+                </a>
+              </Magnetic>
+            )}
           </motion.div>
 
           <motion.div
