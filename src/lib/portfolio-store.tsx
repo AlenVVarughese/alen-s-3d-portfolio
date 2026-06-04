@@ -94,6 +94,8 @@ const DEFAULT_DATA: PortfolioData = {
   profileVideoUrl: DEFAULT_VIDEO,
   profileName: "ALEN.V.VARUGHESE",
   profileAudio: false,
+  resumeUrl: "https://res.cloudinary.com/dsjstkis8/image/upload/v1780593624/ALEN_V_Resume_bnnxbe.pdf",
+
 
   tagline:
     "Transforming Raw Data into Meaningful Business Decisions.",
