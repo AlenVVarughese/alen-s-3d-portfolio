@@ -39,6 +39,7 @@ function Index() {
         <About />
         <Projects />
         <Experience />
+        <Certifications />
         <Contact />
         <AdminPanel />
       </main>
