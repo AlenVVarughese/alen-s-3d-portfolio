@@ -85,15 +85,22 @@ export function AdminPanel() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-[90] bg-black/70 backdrop-blur-md"
-            onClick={() => setOpen(false)}
+            onMouseDown={(e) => {
+              if (e.target === e.currentTarget) setOpen(false);
+            }}
+            onTouchStart={(e) => {
+              if (e.target === e.currentTarget) setOpen(false);
+            }}
           >
             <motion.div
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "spring", damping: 28, stiffness: 240 }}
+              onMouseDown={(e) => e.stopPropagation()}
+              onTouchStart={(e) => e.stopPropagation()}
               onClick={(e) => e.stopPropagation()}
-              className="absolute right-0 top-0 h-full w-full sm:max-w-xl bg-background border-l border-gold/30 overflow-y-auto"
+              className="absolute right-0 top-0 h-full w-full sm:max-w-xl bg-background border-l border-gold/30 overflow-y-auto overscroll-contain"
             >
               <div className="sticky top-0 z-10 bg-background/95 backdrop-blur px-5 py-4 border-b border-border flex items-center justify-between">
                 <div className="flex items-center gap-2">
